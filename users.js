@@ -19,13 +19,13 @@ const collection = db.collection('user_data');
 const users = collection.find({}).toArray();
 
 const findUser = async (username) => {
-    return users.find(user => user.username == username);
+    return ((await users).filter(user => user.username == username))[0]
 }
 
 // Registering a User
 const addUser = async (username, password) => {
     const passwordHash = await bcrypt.hash(password, 10);
-    const pushedData = await collection.insertOne({username, password});
+    const pushedData = await collection.insertOne({username, passwordHash});
     const _id = pushedData.insertedId.toString();
     const newUser = {_id, username, passwordHash};
     return newUser;
